@@ -1,0 +1,73 @@
+﻿<Window x:Class="RadiationPattern_3D.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RadiationPattern_3D"
+        mc:Ignorable="d"
+        xmlns:glWpfControl="clr-namespace:OpenTK.Wpf;assembly=GLWpfControl"
+        Title="MainWindow" WindowState ="Maximized">
+    
+    <Grid>
+        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="0.3*"/>
+        </Grid.ColumnDefinitions>
+
+        <DockPanel Grid.Column="0">
+            <glWpfControl:GLWpfControl x:Name="OpenTkControl" Render="OpenTkControl_OnRender" 
+                                       MouseMove="OpenTkControl_MouseMove" 
+                                       MouseLeftButtonDown="OpenTkControl_MouseLeftButtonDown"
+                                       MouseLeftButtonUp="OpenTkControl_MouseLeftButtonUp"
+                                       MouseWheel="OpenTkControl_MouseWheel"/>
+        </DockPanel>
+
+        <DockPanel Grid.Column="1">
+            
+            <Button DockPanel.Dock="Bottom" Content="Смоделировать диаграмму" Click="Button_Click">
+
+            </Button>
+            
+            <GroupBox DockPanel.Dock="Bottom">
+
+                <Grid>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Column="0" Grid.Row="0" Margin="48,0,0,8" Text="Размер антенны: "/>
+                    <TextBox Grid.Column="1" Grid.Row="0" Margin="8,0,0,8" Text="11" x:Name="antennaDataSize" TextChanged="antennaDataSize_TextChanged"/>
+
+                    <TextBlock Grid.Column="0" Grid.Row="1" Margin="48,0,0,8" Text="Радиус расчетной сферы: "/>
+                    <TextBox Grid.Column="1" Grid.Row="1" Margin="8,0,0,8" Text="100" x:Name="R"/>
+
+                    <TextBlock Grid.Column="0" Grid.Row="2" Margin="48,0,0,8" Text="Длина волны: "/>
+                    <TextBox Grid.Column="1" Grid.Row="2" Margin="8,0,0,8" Text="1" x:Name="lambda"/>
+
+                    <TextBlock Grid.Column="0" Grid.Row="3" Margin="48,0,0,8" Text="Множитель периода сетки: "/>
+                    <TextBox Grid.Column="1" Grid.Row="3" Margin="8,0,0,8" Text="0,5" x:Name="d_koff"/>
+
+                </Grid>
+
+            </GroupBox>
+
+            <Image DockPanel.Dock="Top" x:Name="AntennaDataImage" 
+                   MouseLeftButtonDown="AntennaDataImage_MouseLeftButtonDown" 
+                   RenderOptions.BitmapScalingMode="NearestNeighbor"
+                   VerticalAlignment="Top"/>
+
+        </DockPanel>
+
+    </Grid>
+    
+</Window>
