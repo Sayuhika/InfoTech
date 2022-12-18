@@ -57,7 +57,7 @@ namespace ImageCleaningService_FlowingBG
 
             Model = new PlotModel();
             Model.Axes.Add(new LinearAxis { Position = AxisPosition.Left });
-            Model.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom, Minimum = 0 });
+            Model.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom});
 
             foreach (var pts in points) {
                 var s = new LineSeries {

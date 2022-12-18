@@ -19,7 +19,6 @@
             <glWpfControl:GLWpfControl x:Name="OpenTkControl" Render="OpenTkControl_OnRender" 
                                        MouseMove="OpenTkControl_MouseMove" 
                                        MouseLeftButtonDown="OpenTkControl_MouseLeftButtonDown"
-                                       MouseLeftButtonUp="OpenTkControl_MouseLeftButtonUp"
                                        MouseWheel="OpenTkControl_MouseWheel"/>
         </DockPanel>
 
@@ -43,6 +42,7 @@
                         <RowDefinition Height="auto" />
                         <RowDefinition Height="auto" />
                         <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
                     </Grid.RowDefinitions>
 
                     <TextBlock Grid.Column="0" Grid.Row="0" Margin="48,0,0,8" Text="Размер антенны: "/>
@@ -57,14 +57,22 @@
                     <TextBlock Grid.Column="0" Grid.Row="3" Margin="48,0,0,8" Text="Множитель периода сетки: "/>
                     <TextBox Grid.Column="1" Grid.Row="3" Margin="8,0,0,8" Text="0,5" x:Name="d_koff"/>
 
+                    <TextBlock Grid.Column="0" Grid.Row="4" Margin="48,0,0,8" Text="Усиление сигнала (если = 0, то авто): "/>
+                    <TextBox Grid.Column="1" Grid.Row="4" Margin="8,0,0,8" Text="0" x:Name="power_koff"/>
+
                 </Grid>
 
             </GroupBox>
-
-            <Image DockPanel.Dock="Top" x:Name="AntennaDataImage" 
+            <UniformGrid Columns="1" Rows="2" DockPanel.Dock="Top" VerticalAlignment="Top">
+                <Image x:Name="AntennaDataImage" 
                    MouseLeftButtonDown="AntennaDataImage_MouseLeftButtonDown" 
-                   RenderOptions.BitmapScalingMode="NearestNeighbor"
-                   VerticalAlignment="Top"/>
+                   RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+
+                <Image x:Name="RadiationPattern2DImage"                   
+                   RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                
+            </UniformGrid>
+
 
         </DockPanel>
 

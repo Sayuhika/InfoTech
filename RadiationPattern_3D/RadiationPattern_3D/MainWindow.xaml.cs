@@ -34,6 +34,7 @@ namespace RadiationPattern_3D
         public const double mouseScale = 0.01;
         public Point MousePositionStart;
         public double maxI;
+        public double pow_koff = 0;
         public MainWindow()
         {
             InitializeComponent();
@@ -64,12 +65,17 @@ namespace RadiationPattern_3D
             }
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private async void Button_Click(object sender, RoutedEventArgs e)
         {
             phi = 0;
             theta = 0; 
             r = 100;
+            pow_koff = double.Parse(power_koff.Text);
             I = Functions.GetRadiationPattern(AntennaData, int.Parse(R.Text), double.Parse(d_koff.Text), double.Parse(lambda.Text), out maxI);
+
+            await Task.Delay(500);
+
+            RadiationPattern2DImage.Source = Drawer.ConvertToSource(Drawer.TakeScreenshot(OpenTkControl.FrameBufferWidth, OpenTkControl.FrameBufferHeight));
         }
 
         private void AntennaDataImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -82,6 +88,8 @@ namespace RadiationPattern_3D
 
             AntennaData[x, y] = !AntennaData[x, y];
             AntennaDataImage.Source = Drawer.ConvertToSource(Drawer.CreateAntennaDataImage(AntennaData));
+
+            Button_Click(sender, e);
         }
 
         private void OpenTkControl_OnRender(TimeSpan delta)
@@ -101,13 +109,10 @@ namespace RadiationPattern_3D
             double size = 200;
             GL.Ortho(-size, size, -size, size, -500, 500);
 
-            GL.Enable(EnableCap.CullFace);
-            GL.CullFace(CullFaceMode.Back);
-            GL.FrontFace(FrontFaceDirection.Ccw);
             GL.Enable(EnableCap.DepthTest);
             GL.DepthFunc(DepthFunction.Less);
 
-            Drawer.DrawRadiationPattern(I, maxI);
+            Drawer.DrawRadiationPattern(I, maxI, pow_koff);
         }
 
         private void OpenTkControl_MouseMove(object sender, MouseEventArgs e)
@@ -129,11 +134,6 @@ namespace RadiationPattern_3D
         private void OpenTkControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             MousePositionStart = Mouse.GetPosition(OpenTkControl);
-        }
-
-        private void OpenTkControl_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-
         }
 
         private void OpenTkControl_MouseWheel(object sender, MouseWheelEventArgs e)

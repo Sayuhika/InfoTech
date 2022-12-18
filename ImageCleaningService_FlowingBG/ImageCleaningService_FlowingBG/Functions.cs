@@ -41,16 +41,29 @@ namespace ImageCleaningService_FlowingBG
                 throw new ArgumentException();
             
             byte[,] substract_image = new byte[width, height];
+            double[] line = new double[width];
 
             // Вычитание одного изображения из другого с некоторым коэффициентом
-            Parallel.For(0, width, i =>
-                Parallel.For(0, height, j =>
+            Parallel.For(0, width, i => 
+            {
+                for (int j = 0; j < height; j++)
                 {
                     double v = main_image[i, j] - subtrahend_image[i, j] * subkoff;
+                    if (line[i] < v) line[i] = v;
                     substract_image[i, j] = (byte)Math.Clamp(v, 0.0, 255.0);
-                })
-            );
+                } 
+            });
 
+            double max = line.Max();
+
+            Parallel.For(0, width, i => 
+            {
+                Parallel.For(0, height, j =>
+                {
+                    substract_image[i,j] = (byte)(substract_image[i, j] * 255 / max);
+                });
+            });
+                
             return substract_image;
         }
 

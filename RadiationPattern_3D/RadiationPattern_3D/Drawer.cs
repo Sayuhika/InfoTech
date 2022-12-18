@@ -58,13 +58,29 @@ namespace RadiationPattern_3D
 
             return result;
         }
+        public static Bitmap TakeScreenshot(int w, int h)
+        {
+            Bitmap bmp = new Bitmap(w, h);
+            byte[] rgbData = new byte[w * h * 3];
+            GL.ReadPixels(0, 0, w, h, OpenTK.Graphics.OpenGL.PixelFormat.Rgb,PixelType.UnsignedByte, rgbData);
+            BitmapData data = bmp.LockBits(new Rectangle(0, 0, w, h), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+            Marshal.Copy(rgbData, 0, data.Scan0, rgbData.Length);
+            bmp.UnlockBits(data);
 
-        public static void DrawRadiationPattern(double[,] I, double maxI) 
+            return bmp;
+        }
+
+        public static void DrawRadiationPattern(double[,] I, double maxI, double power_koff = 0) 
         {
             GL.Color3(Color.Green);
             int size_x = I.GetLength(0);
             int size_y = I.GetLength(1);
-            double scale = 0.5 * (size_x + size_y) / maxI;
+
+            double scale;
+            if (power_koff == 0) 
+                scale = 0.5 * (size_x + size_y) / maxI;
+            else 
+                scale = power_koff;
 
             for (int x = 0; x < size_x - 1; x++)
             {             

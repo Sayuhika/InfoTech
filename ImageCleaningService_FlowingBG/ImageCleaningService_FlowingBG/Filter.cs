@@ -52,7 +52,6 @@ namespace ImageCleaningService_FlowingBG
             return kernel;
         }
         
-
         protected static double[,] GetSincKernel(int size)
         {
             double[,] kernel = new double[size, size];
@@ -73,7 +72,6 @@ namespace ImageCleaningService_FlowingBG
             Parallel.For(0, size, i => Parallel.For(0, size, j => kernel[i, j] /= sum));
             return kernel;
         }
-
 
         public static byte[,] Apply(byte[,] pixels, double[,] kernel)
         {
@@ -98,7 +96,6 @@ namespace ImageCleaningService_FlowingBG
             );
             return result;
         }
-
 
         public static byte[,] ApplyMedian(byte[,] image, int size)
         {

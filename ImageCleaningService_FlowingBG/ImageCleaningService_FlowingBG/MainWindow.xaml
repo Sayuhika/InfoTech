@@ -47,23 +47,34 @@
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"/>
-                <ColumnDefinition Width="auto"/>
-                <ColumnDefinition Width="50"/>
-                <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="50"/>
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <Button Grid.Row ="0" Grid.Column = "0" Click="Button_OpenImage" Content="Загрузить изображение" Margin="8,0" FontFamily="Comic Sans MS"/>
-            <TextBlock Grid.Row="0" Grid.Column = "1" Text="Размер ядра фильтра:" Margin="8, 0, 8, 0"/>
-            <TextBox Grid.Row="0" Grid.Column = "2" x:Name="blursize" Text="7"/>
-            <TextBlock Grid.Row="0" Grid.Column = "3" Text="Коэффициент вычитания изображения:" Margin="8, 0, 8, 0"/>
-            <TextBox Grid.Row="0" Grid.Column = "4" x:Name="subkoff" Text="0,2"/>
-            <CheckBox Grid.Row ="0" Grid.Column = "5" x:Name="FilterMod" Content="Использовать медианный фильтр вместо линейного" IsChecked="False" Margin="8,0" FontFamily="Comic Sans MS"/>
-            <CheckBox Grid.Row ="0" Grid.Column = "6" x:Name="showNoisePart" Content="Показать выделенный шум" IsChecked="False" Click="showNoisePart_Click" Margin="8,0" FontFamily="Comic Sans MS"/>
+                 
+            <TextBlock  Grid.Row="0"   Grid.Column="0" Text="Коэффициент вычитания (линейный фильтр):" Margin="8, 0, 8, 0"/>
+            <TextBox    Grid.Row="0"   Grid.Column="1" x:Name="subkoff_l" Text="0,65"/>
+            <CheckBox   Grid.Row="0"   Grid.Column="2" x:Name="FilterMod" Content="Использовать медианный фильтр вместо линейного" IsChecked="False" Margin="8,0" FontFamily="Comic Sans MS"/>
+            <CheckBox   Grid.Row="0"   Grid.Column="3" x:Name="showNoisePart" Content="Показать выделенный шум" IsChecked="False" Click="showNoisePart_Click" Margin="8,0" FontFamily="Comic Sans MS"/>
+
+            <TextBlock  Grid.Row="1"   Grid.Column="0" Text="Коэффициент вычитания (медианный фильтр):" Margin="8, 0, 8, 0"/>
+            <TextBox    Grid.Row="1"   Grid.Column="1" x:Name="subkoff_m" Text="0,35"/>
+            
+            <TextBlock  Grid.Row="2"   Grid.Column="0" Text="Размер ядра фильтра:" Margin="8, 0, 8, 0"/>
+            <TextBox    Grid.Row="2"   Grid.Column="1" x:Name="blursize" Text="21"/>
+
+            <TextBlock  Grid.Row="3"   Grid.Column="0" Text="Шаг увеличения размера фильтра:" Margin="8, 0, 8, 0"/>
+            <TextBox    Grid.Row="3"   Grid.Column="1" x:Name="stepSize" Text="2"/>
+            
+            <TextBlock  Grid.Row="4"   Grid.Column="0" Text="Число шагов:" Margin="8, 0, 8, 0"/>
+            <TextBox    Grid.Row="4"   Grid.Column="1" x:Name="stepCount" Text="10"/>
         </Grid>
 
         <Grid Grid.Row="2" Margin="0,8,0,8" Grid.ColumnSpan="2">
@@ -88,9 +99,13 @@
             <Grid.ColumnDefinitions >
                 <ColumnDefinition  Width="*"/>
                 <ColumnDefinition  Width="*"/>
+                <ColumnDefinition  Width="*"/>
+                <ColumnDefinition  Width="*"/>
             </Grid.ColumnDefinitions>
-            <Button  Grid.Column="0" x:Name="ButtonDo" Content="Провести обряд очищения"  FontSize="30" FontFamily="Comic Sans MS" Margin="7,8,8,8" Click="ButtonDo_Click"/>
-            <Button  Grid.Column="1" x:Name="ButtonDoResearch" Content="Провести исследование"  FontSize="30" FontFamily="Comic Sans MS" Margin="7,8,8,8" Click="ButtonDoResearch_Click"/>
+            <Button  Grid.Column="0" x:Name="ButtonOpenImage"     Content="Загрузить изображение"     Click="Button_OpenImage"        FontSize="30" FontFamily="Comic Sans MS" Margin="7,8,8,8"/>
+            <Button  Grid.Column="1" x:Name="ButtonCreateNoise"   Content="Сгенерировать шум"         Click="ButtonCreateNoise_Click" FontSize="30" FontFamily="Comic Sans MS" Margin="7,8,8,8" />
+            <Button  Grid.Column="2" x:Name="ButtonDo"            Content="Восстановить изображение"  Click="ButtonDo_Click"          FontSize="30" FontFamily="Comic Sans MS" Margin="7,8,8,8" />
+            <Button  Grid.Column="3" x:Name="ButtonDoResearch"    Content="Провести исследование"     Click="ButtonDoResearch_Click"  FontSize="30" FontFamily="Comic Sans MS" Margin="7,8,8,8" />
         </Grid>
         
     </Grid>

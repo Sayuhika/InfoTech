@@ -18,9 +18,6 @@ using System.Numerics;
 
 namespace ImageCleaningService_FlowingBG
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         bool isImageLoad = false;
@@ -31,19 +28,35 @@ namespace ImageCleaningService_FlowingBG
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Обработчик кнопки.
+        /// 
+        /// Выполняет разовую отчистку изображения от плавного фона с заданными параметрами.
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ButtonDo_Click(object sender, RoutedEventArgs e)
         {
             if (isImageLoad)
             {
-                imageO = Drawer.GetBitmapPixels(bwImage);
-                imageN = Functions.AddNoiseToImage(imageO, 4.0);
+                if (imageO == null) imageO = Drawer.GetBitmapPixels(bwImage);
+                if (imageN == null) ButtonCreateNoise_Click(this, new RoutedEventArgs());
 
-                if (FilterMod.IsChecked == true)
+                double k;
+
+                if (FilterMod.IsChecked == true) 
+                {
                     noise = Filter.ApplyMedian(imageN, int.Parse(blursize.Text));
+                    k = double.Parse(subkoff_m.Text);
+                }                   
                 else 
-                    noise = Filter.Apply(imageN,Filter.GetKernel(Filter.KernelType.Blur,int.Parse(blursize.Text)));
+                {
+                    noise = Filter.Apply(imageN, Filter.GetKernel(Filter.KernelType.Blur, int.Parse(blursize.Text)));
+                    k = double.Parse(subkoff_l.Text);
+                }
 
-                imageC = Functions.SubtractImage(imageN, noise, double.Parse(subkoff.Text));
+                imageC = Functions.SubtractImage(imageN, noise, k);
 
                 // Отрисовка изображений
                 ImageO.Source = Drawer.ConvertToSource(bwImage);
@@ -60,11 +73,42 @@ namespace ImageCleaningService_FlowingBG
             }
             else
             {
-                Button_OpenImage(sender, e);
-                ButtonDo_Click(sender, e);
+                Button_OpenImage(this, new RoutedEventArgs());
+                ButtonDo_Click(this, new RoutedEventArgs());
             }
         }
 
+        /// <summary>
+        /// Обработчик кнопки.
+        /// 
+        /// Генерация плавного фона (шума).
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ButtonCreateNoise_Click(object sender, RoutedEventArgs e)
+        {
+            if (isImageLoad)
+            {
+                if (imageO == null) imageO = Drawer.GetBitmapPixels(bwImage);
+                imageN = Functions.AddNoiseToImage(imageO, 4.0);
+                showNoisePart_Click(this, new RoutedEventArgs());
+            }
+            else 
+            {
+                Button_OpenImage(this, new RoutedEventArgs());
+                ButtonCreateNoise_Click(this, new RoutedEventArgs());
+            }
+        }
+
+        /// <summary>
+        /// Обработчик кнопки.
+        /// 
+        /// Открыть внешнее изображение и перевести его в ЧБ.
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Button_OpenImage(object sender, RoutedEventArgs e)
         {
             Bitmap rgbImage = new Bitmap(1, 1);
@@ -89,43 +133,71 @@ namespace ImageCleaningService_FlowingBG
             ImageO.Source = Drawer.ConvertToSource(bwImage);
         }
 
+        /// <summary>
+        /// Обработчик кнопки.
+        /// 
+        /// Исследовательская часть программы.
+        /// 
+        /// Создает фильтры различного рамзера и считает отклонение между исходным изображением и восстановленным
+        /// Строит график из полученных отклонений в зависимости от размера фильтра.
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ButtonDoResearch_Click(object sender, RoutedEventArgs e)
         {
             if (isImageLoad)
             {
                 // Исходное изображение
                 byte[,] image = Drawer.GetBitmapPixels(bwImage);
-                // Зашумленное изображение
-                imageN = Functions.AddNoiseToImage(Drawer.GetBitmapPixels(bwImage), 4.0);
 
-                int N = 20;
-                double[] epses1 = new double[N];
-                double[] epses2 = new double[N];
+                // Зашумленное изображение
+                if (imageN == null) ButtonCreateNoise_Click(this, new RoutedEventArgs());
+
+                int N = int.Parse(stepCount.Text);
+                int step = int.Parse(stepSize.Text);
+                int startFS = int.Parse(blursize.Text);
+                double k_l = double.Parse(subkoff_l.Text);
+                double k_m = double.Parse(subkoff_m.Text);
+
+                List<OxyPlot.DataPoint> epses1_l = new();
+                List<OxyPlot.DataPoint> epses2_l = new();
+                List<OxyPlot.DataPoint> epses1_m = new();
+                List<OxyPlot.DataPoint> epses2_m = new();
 
                 // Расчеты
                 for (int i = 0; i < N; i++)
                 {
-                    if (FilterMod.IsChecked == true)
-                        noise = Filter.ApplyMedian(imageN, i + 10);
-                    else
-                        noise = Filter.Apply(imageN, Filter.GetKernel(Filter.KernelType.Blur, i + 10));
-
-                    var imageC = Functions.SubtractImage(imageN, noise, double.Parse(subkoff.Text));
-
+                    int fs = startFS + i * step;
                     double eps1, eps2;
 
+                    // Линейный фильтр
+                    var noise_l = Filter.Apply(imageN, Filter.GetKernel(Filter.KernelType.Blur, fs));
+                    imageC = Functions.SubtractImage(imageN, noise_l, k_l);
                     Functions.GetEpsilons(image, imageN, imageC, out eps1, out eps2);
+                    epses1_l.Add(new OxyPlot.DataPoint(fs, eps1));
+                    epses2_l.Add(new OxyPlot.DataPoint(fs, eps2));
 
-                    epses1[i] = eps1;
-                    epses2[i] = eps2;
+                    // Медианный фильтр
+                    var noise_m = Filter.ApplyMedian(imageN, fs);
+                    imageC = Functions.SubtractImage(imageN, noise_m, k_m);
+                    Functions.GetEpsilons(image, imageN, imageC, out eps1, out eps2);
+                    epses1_m.Add(new OxyPlot.DataPoint(fs, eps1));
+                    epses2_m.Add(new OxyPlot.DataPoint(fs, eps2));
                 }
 
-                // Рисуем график
-                PlotViewModel plot = new();
-                ResearchLinear.DataContext = plot;
-                plot.Points = new[] { 
-                    epses1.Select((x, i) => new OxyPlot.DataPoint(i, x)).ToList(),
-                    epses2.Select((x, i) => new OxyPlot.DataPoint(i, x)).ToList() };
+                // Графики
+                // Линейный фильтр
+                PlotViewModel plot_l = new();
+                plot_l.Points = new[] { new List<OxyPlot.DataPoint>()};
+                ResearchLinear.DataContext = plot_l;
+                plot_l.Points[0] = epses2_l;
+
+                // Медианный фильтр
+                PlotViewModel plot_m = new();
+                plot_m.Points = new[] { new List<OxyPlot.DataPoint>() };
+                ResearchMedian.DataContext = plot_m;
+                plot_m.Points[0] = epses2_m;
             }
             else
             {
@@ -134,6 +206,13 @@ namespace ImageCleaningService_FlowingBG
             }
         }
 
+        /// <summary>
+        /// Функция определеяет что нужно отрисовать на текущий момент:
+        /// Зашумленное изображение или его размытый аналог (выделенный шум).
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void showNoisePart_Click(object sender, RoutedEventArgs e)
         {
             if (showNoisePart.IsChecked.Value) 
