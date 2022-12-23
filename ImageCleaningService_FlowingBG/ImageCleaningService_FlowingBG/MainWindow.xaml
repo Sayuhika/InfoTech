@@ -103,7 +103,7 @@
                 <ColumnDefinition  Width="*"/>
             </Grid.ColumnDefinitions>
             <Button  Grid.Column="0" x:Name="ButtonOpenImage"     Content="Загрузить изображение"     Click="Button_OpenImage"        FontSize="30" FontFamily="Comic Sans MS" Margin="7,8,8,8"/>
-            <Button  Grid.Column="1" x:Name="ButtonCreateNoise"   Content="Сгенерировать шум"         Click="ButtonCreateNoise_Click" FontSize="30" FontFamily="Comic Sans MS" Margin="7,8,8,8" />
+            <Button  Grid.Column="1" x:Name="ButtonCreateNoise"   Content="Сгенерировать вуаль"         Click="ButtonCreateNoise_Click" FontSize="30" FontFamily="Comic Sans MS" Margin="7,8,8,8" />
             <Button  Grid.Column="2" x:Name="ButtonDo"            Content="Восстановить изображение"  Click="ButtonDo_Click"          FontSize="30" FontFamily="Comic Sans MS" Margin="7,8,8,8" />
             <Button  Grid.Column="3" x:Name="ButtonDoResearch"    Content="Провести исследование"     Click="ButtonDoResearch_Click"  FontSize="30" FontFamily="Comic Sans MS" Margin="7,8,8,8" />
         </Grid>

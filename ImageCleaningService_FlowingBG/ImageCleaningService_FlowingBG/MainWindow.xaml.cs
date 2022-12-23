@@ -90,7 +90,7 @@ namespace ImageCleaningService_FlowingBG
         {
             if (isImageLoad)
             {
-                if (imageO == null) imageO = Drawer.GetBitmapPixels(bwImage);
+                imageO = Drawer.GetBitmapPixels(bwImage);
                 imageN = Functions.AddNoiseToImage(imageO, 4.0);
                 showNoisePart_Click(this, new RoutedEventArgs());
             }
